@@ -15,8 +15,9 @@ public:
 	}
 
 	/// @brief 读取内容，并且生成缓冲对象，若是读取失败，可以考虑关闭对象之后重新读取
+	///	@param buffLen 建议读取长度，小于 1 表示一次性全部读取
 	/// @return 缓冲对象
-	QSharedPointer<XmlBuff> readContent();
+	QSharedPointer<XmlBuff> readContent(const qsizetype & buffLen = 0);
 	/// @brief 获取缓冲对象
 	/// @return 缓冲对象
 	QSharedPointer<XmlBuff> getXmlBuff();

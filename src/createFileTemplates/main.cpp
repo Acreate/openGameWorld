@@ -3,9 +3,10 @@
 #include "typeFile.h"
 #include "typeText.h"
 #include "typeTextBuff.h"
+
 int main(int argc, char* argv[]) {
 	ProcessArgs process( argc, argv );
-	auto textInstance = typeFile::generate::textInstance( "abcTest.txt" );
+	auto textInstance = typeFile::generate::file::textInstance( "abcTest.txt" );
 	qsizetype writeContents = textInstance->writeContents( "123456" );
 	QString strContent = "987654321";
 	qsizetype writeContents2 = textInstance->writeContents( strContent, 1024 );

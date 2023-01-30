@@ -9,6 +9,10 @@ int main(int argc, char* argv[]) {
 	qsizetype writeContents = textInstance->writeTextContents( "123456" );
 	QString strContent = "987654321";
 	qsizetype writeContents2 = textInstance->writeTextContents( strContent, 1024 );
+
 	qsizetype length = strContent.length();
+	auto textBuff = textInstance->getTextBuff();
+	textBuff << "你好";
+	qsizetype length3 = textInstance->writeTextBuffInstanceContents();
 	return 0;
 }

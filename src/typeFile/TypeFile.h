@@ -1,5 +1,6 @@
 ﻿#ifndef TYPEFILE_H
 #define TYPEFILE_H
+#include <mutex>
 #include <QDir>
 #include <qfile.h>
 #include <QSharedPointer>
@@ -13,6 +14,58 @@ public:
 
 	/// @brief 文本类型
 	class TYPEFILE_EXPORT Text {
+	public:
+		/// @brief 文本缓冲对象
+		class TYPEFILE_EXPORT TextBuff {
+			/// @brief 写入内容
+			QSharedPointer<QString> contents;
+
+		public:
+			TextBuff() : contents( new QString() ) {
+			}
+
+			TextBuff(const QString& contents)
+				: contents( new QString( contents ) ) {
+			}
+
+			/// @brief 追加一段字符
+			///	@return 自身操作对象
+			TextBuff& operator<<(const QString& str) {
+				contents->append( str );
+				return *this;
+			}
+
+			/// @brief 把字符放置到指定字符串
+			///	@return 自身操作对象
+			TextBuff& operator>>(QString& str) {
+				str = *contents;
+				return *this;
+			}
+
+			/// @brief 重新赋值
+			///	@return 自身操作对象
+			TextBuff& operator=(const QString& str) {
+				*contents = str;
+				return *this;
+			}
+
+			/// @brief 获取内容
+			/// @return 缓冲内容
+			const QString getContent() const {
+				return *this->contents;
+			}
+
+			/// @brief 使用 QString 方式填充参数
+			/// @return 新的操作对象
+			TextBuff arg(const QString& str) {
+				return TextBuff( contents->arg( str ) );
+			}
+
+			void clear() {
+				contents->clear();
+			}
+		};
+
 		/// @brief 文件操作对象实例
 		QFile fileInstance;
 		/// @brief 文件状态，0 为空状态
@@ -21,8 +74,8 @@ public:
 		QString filePath;
 		/// @brief 文件夹
 		QDir fileInDir;
-
-	private:
+		/// @brief 缓冲对象
+		TextBuff buffInstance;
 		/// @brief 是否能打开文件，该操作会尝试打开文件
 		/// @return 失败返回 false
 		inline bool isCanOpen() {
@@ -30,6 +83,10 @@ public:
 		}
 
 	public:
+		TextBuff& getTextBuff() {
+			return buffInstance;
+		}
+
 		explicit Text(const QString& filePath)
 			: fileInstance( filePath ), filePath( filePath ), fileInDir( filePath ) {
 		}
@@ -47,6 +104,17 @@ public:
 		/// @param writeCount 写入个数，小于 1 为一次性全部写入
 		/// @return 写入个数
 		qsizetype writeTextContents(const QString& strContent, const qsizetype& writeCount = 0);
+
+		/// @brief 使用缓冲对象进行写入
+		///	@param  writeCount 建议写入个数
+		///	@return 写入个数
+		inline qsizetype writeTextBuffInstanceContents(const qsizetype& writeCount = 0) {
+			auto textBuff = getTextBuff();
+			QString strContent = textBuff.getContent();
+			qint64 textContentsLen = writeTextContents( strContent, writeCount );
+			textBuff.clear();
+			return textContentsLen;
+		}
 
 		/// @brief 设置当前文件的读取下标位置
 		/// @param index 下标位置

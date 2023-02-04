@@ -13,5 +13,5 @@ QSharedPointer<typeFile::Xml> typeFile::generate::file::xmlInstance(const QStrin
 }
 
 QSharedPointer<typeFile::XmlBuff> typeFile::generate::obj::xmlNodeInstance(const QString& str) {
-
+	return nullptr;
 }

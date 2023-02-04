@@ -16,7 +16,7 @@ class TYPEFILE_EXPORT typeFile::type::XmlNode {
 public:
 	/// @brief 创建节点，该节点必须存在一个名称
 	/// @param nodeName 
-	explicit XmlNode(const QSharedPointer<QString>& nodeName)
+	explicit XmlNode(const QSharedPointer<QString> nodeName)
 		: nodeName( nodeName ) {
 	}
 
@@ -31,7 +31,7 @@ public:
 		*content = *other.content;
 	}
 
-	explicit XmlNode(const QSharedPointer<XmlNode>& other) {
+	explicit XmlNode(const QSharedPointer<XmlNode> other) {
 		nodeName = QSharedPointer<QString>( new QString( *other->nodeName ) );
 		*nodePropertys = *other->nodePropertys;
 		*nodeChildren = *other->nodeChildren;
@@ -54,7 +54,7 @@ public:
 	/// @brief 追加节点到子节点到列表当中，并且返回子节点个数
 	/// @param children 追加的子节点
 	/// @return 节点个数
-	qsizetype appendChildren(const QSharedPointer<XmlNode>& children) {
+	qsizetype appendChildren(const QSharedPointer<XmlNode> children) {
 		nodeChildren->append( QSharedPointer<XmlNode>( new XmlNode( children ) ) );
 		return nodeChildren->size();
 	}

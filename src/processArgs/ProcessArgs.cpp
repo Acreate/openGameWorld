@@ -77,6 +77,7 @@ ProcessArgs::ProcessArgs(int& argc, char** argv) : QCoreApplication( argc, argv 
 		/// 填充进程参数
 		if( argc > 1 )
 			fullProcessArgs( argc, argv, processArgs );
+		processArgs[""].append( argv[0] );
 	}
 }
 

@@ -1,0 +1,17 @@
+project(processPath)
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+# 当前目录下也有代码
+aux_source_directory(. SRC_LIST)
+
+add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
+
+
+target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Core)
+
+GENERATE_EXPORT_HEADER( ${PROJECT_NAME}
+	EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_export.h )
+TARGET_INCLUDE_DIRECTORIES( ${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
+

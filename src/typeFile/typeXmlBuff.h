@@ -12,7 +12,7 @@ public:
 	XmlBuff() {
 	}
 
-	void setXmlNode(QSharedPointer<type::XmlNode>& node) {
+	void setXmlNode(QSharedPointer<type::XmlNode> node) {
 		this->node = node;
 	}
 

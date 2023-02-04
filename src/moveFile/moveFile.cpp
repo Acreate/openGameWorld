@@ -2,6 +2,33 @@
 #include <ProcessArgs.h>
 #include <ProcessPath.h>
 #include <QFile>
+#include <QRunnable>
+
+#include <QThreadPool>
+
+class FileContrnRunnable : public QRunnable {
+	QString oldName, newName;
+	bool isCopy;
+
+public:
+	FileContrnRunnable(const QString& oldName, const QString& newName, const bool isCopy) : QRunnable(),
+																							oldName( oldName ),
+																							newName( newName ),
+																							isCopy( isCopy ) {
+	}
+
+	void run() override;
+
+	~FileContrnRunnable() override {
+	}
+};
+
+void FileContrnRunnable::run() {
+	if( !isCopy && QFile::rename( oldName, newName ) )
+		std::cout << oldName.toLocal8Bit().data() << std::endl;
+	else if( QFile::copy( oldName, newName ) )
+		std::cout << oldName.toLocal8Bit().data() << std::endl;
+}
 
 int main(int argc, char* argv[]) {
 	ProcessArgs appProcess( argc, argv );
@@ -20,8 +47,9 @@ int main(int argc, char* argv[]) {
 	bool isToInSubDir = false;
 	// 是否拷贝
 	bool isCopy = false;
+	qsizetype maxThreadCount = 8;
 	// 最大选项
-	qsizetype maxOption = 4;
+	qsizetype maxOption = 6;
 	for( size_t parCount = 0; iterator != end && parCount < maxOption; ++iterator ) {
 		if( iterator.key() == "d" ) {
 			// 目标目录
@@ -44,6 +72,12 @@ int main(int argc, char* argv[]) {
 			++parCount;
 		} else if( iterator.key() == "c" ) {
 			isCopy = true;
+			++parCount;
+		} else if( iterator.key() == "w" ) {
+			bool isOk = false;
+			int converInt = iterator.value()[0].toInt( &isOk );
+			if( isOk )
+				maxThreadCount = converInt;
 			++parCount;
 		}
 	}
@@ -105,15 +139,17 @@ int main(int argc, char* argv[]) {
 				buffFiles->append( *itemIterator );
 		// 设置目标
 		desPath = desPath.append( QDir::separator() );
+		// 线程池
+		QThreadPool threadPool;
+		// 设置线程池线程工作数量
+		threadPool.setMaxThreadCount( maxThreadCount );
 		for( index = 0, typeLen = buffFiles->length(); index < typeLen; ++index ) {
 			QFileInfo currentWorkFileName = buffFiles->at( index );
 			QString newName = desPath + currentWorkFileName.fileName();
 			QString oldName = currentWorkFileName.absoluteFilePath();
-			if( !isCopy && QFile::rename( oldName, newName ) )
-				std::cout << currentWorkFileName.fileName().toLocal8Bit().data() << std::endl;
-			else if( QFile::copy( oldName, newName ) )
-				std::cout << currentWorkFileName.fileName().toLocal8Bit().data() << std::endl;
+			threadPool.start( new FileContrnRunnable( oldName, newName, isCopy ) );
 		}
+		threadPool.waitForDone();
 	}
 	std::cout << QString( "目录 : " ).toLocal8Bit().data() << std::endl;
 	if( dirNames )

@@ -1,7 +1,7 @@
 #ifndef TYPESQL_H
 #define TYPESQL_H
 
-#include "typeSql_export.h"
+#include "TypeSql_export.h"
 
 class TYPESQL_EXPORT TypeSql
 	{

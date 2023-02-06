@@ -1,6 +1,6 @@
-﻿#include "typeFile.h"
-#include "typeText.h"
-#include "typeXml.h"
+﻿#include "TypeFile.h"
+#include "TypeText.h"
+#include "TypeXml.h"
 #include <QFile>
 #include <QDir>
 

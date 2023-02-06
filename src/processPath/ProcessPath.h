@@ -9,7 +9,7 @@
 #include <QSharedPointer>
 #include <QMap>
 #include <QString>
-#include "processPath_export.h"
+#include "ProcessPath_export.h"
 
 /// @brief 路径对象
 namespace path {

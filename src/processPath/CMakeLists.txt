@@ -11,7 +11,16 @@ add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
 
 target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Core)
 
+
+STRING(SUBSTRING "${PROJECT_NAME}" 0 1 exportFileStartName)
+STRING(SUBSTRING "${PROJECT_NAME}" 1 -1 exportFileName)
+STRING(TOUPPER ${exportFileStartName} exportFileStartName)
+
+set(
+	exportFileName ${CMAKE_CURRENT_SOURCE_DIR}/${exportFileStartName}${exportFileName}_export.h
+)
+
 GENERATE_EXPORT_HEADER( ${PROJECT_NAME}
-	EXPORT_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_export.h )
+	EXPORT_FILE_NAME ${exportFileName} )
 TARGET_INCLUDE_DIRECTORIES( ${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
 

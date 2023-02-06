@@ -10,7 +10,7 @@
 #include <QSharedPointer>
 #include <QMap>
 #include <QString>
-#include "processArgs_export.h"
+#include "ProcessArgs_export.h"
 
 /// @brief 程序参数信息使用类，包含关于进程的所有信息功能
 class PROCESSARGS_EXPORT ProcessArgs : public QCoreApplication {

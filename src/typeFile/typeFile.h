@@ -5,7 +5,7 @@
 #include <qfile.h>
 #include <QSharedPointer>
 #include <QString>
-#include "typeFile_export.h"
+#include "TypeFile_export.h"
 
 /// @brief 类型操作对象名称空间
 namespace typeFile {

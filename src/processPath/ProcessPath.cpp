@@ -1,47 +1,5 @@
 ﻿#include "ProcessPath.h"
 
-/// @brief 获取路径下的所有文件
-/// @param path 路径
-/// @param fileNames 文件容器 
-/// @return 获取个数
-static qsizetype getFilesInPath(const QDir& path, QSharedPointer<QVector<QFileInfo>> fileNames) {
-	QFileInfoList entryInfoList = path.entryInfoList( QDir::Files );
-	qsizetype result = entryInfoList.length();
-	for( qsizetype index = 0; index < result; ++index )
-		fileNames->append( entryInfoList[index] );
-	return result;
-}
-
-/// @brief 获取路径下的所有目录
-/// @param path 路径
-/// @param dirNames 目录容器
-/// @return 
-static qsizetype getDirInPath(const QDir& path, QSharedPointer<QVector<QFileInfo>> dirNames) {
-	QFileInfoList entryInfoList = path.entryInfoList( QDir::AllDirs | QDir::Drives | QDir::NoDotAndDotDot );
-	qsizetype result = entryInfoList.length();
-	for( qsizetype index = 0; index < result; ++index )
-		dirNames->append( entryInfoList[index] );
-	return result;
-}
-
-/// @brief 获取路径下的所有文件与目录
-/// @param path 路径
-/// @param fileNames 文件容器 
-/// @param dirNames 目录容器
-/// @return 获取数目
-static qsizetype getPathEntry(const QDir& path, QSharedPointer<QVector<QFileInfo>> fileNames, QSharedPointer<QVector<QFileInfo>> dirNames) {
-	QFileInfoList entryInfoList = path.entryInfoList( QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot );
-	qsizetype result = entryInfoList.length();
-	for( qsizetype index = 0; index < result; ++index ) {
-		QFileInfo fileInfo = entryInfoList[index];
-		if( fileInfo.isDir() )
-			dirNames->append( fileInfo );
-		else if( fileInfo.isFile() )
-			fileNames->append( fileInfo );
-	}
-	return result;
-}
-
 qsizetype path::info::getPathInfo(const QString& path, QSharedPointer<QVector<QFileInfo>> fileNames, QSharedPointer<QVector<QFileInfo>> dirNames) {
 	qsizetype result = 0;
 	if( fileNames == nullptr && dirNames == nullptr )

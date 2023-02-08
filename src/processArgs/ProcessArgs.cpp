@@ -27,7 +27,8 @@ static void fullProcessArgs(int argc, char* argv[], QMap<QString, QVector<QStrin
 	const QString sep = "-";
 	const size_t sepLen = sep.length();
 	for( int index = 1; index < argc; ) {
-		arg = argv[index];
+		char* currentArg = argv[index];
+		arg = QString::fromLocal8Bit( currentArg );
 		if( arg.startsWith( sep ) ) {
 			// 发现是间隔符
 			optionName = arg.mid( sepLen );
@@ -35,7 +36,8 @@ static void fullProcessArgs(int argc, char* argv[], QMap<QString, QVector<QStrin
 			if( resultParams == args.end() )
 				resultParams = args.insert( optionName, params );
 			for( index += 1; index < argc; ++index ) {
-				arg = argv[index];
+				char* currentArgParam = argv[index];
+				arg = QString::fromLocal8Bit( currentArgParam );
 				//  -p abc -d ggt -t.cpp.h
 				if( arg.startsWith( sep ) )
 					break;

@@ -236,7 +236,7 @@ public:
 				for( auto iterator = subFileInfos->begin(), end = subFileInfos->end(); iterator != end; ++iterator ) {
 					QString string = iterator->data()->toQString();
 					result.append("\t" + string);
-					std::cout << string.toLocal8Bit().data()  << std::endl;
+					std::cout << string.toLocal8Bit().data() << std::endl;
 				}
 				for( auto iterator = subDirInfos->begin(), end = subDirInfos->end(); iterator != end; ++iterator ) {
 					result.append("\t" + iterator->data()->toQString());
@@ -265,11 +265,17 @@ int main( int argc, char *argv[] ) {
 
 	QString writePath;
 	QFileInfo info(currentWorkPath);
+	QString outName;
+	auto strings = appArg["o"];
+	if( strings.length() > 0 )
+		outName = strings[0];
+	else
+		outName = "读我获取所有文件名.txt";
 	// 如果是文件，则检查对应的写入文件
 	if( info.isDir() )
-		writePath = info.absoluteFilePath() + QDir::separator() + "读我获取所有文件名.txt";
+		writePath = info.absoluteFilePath() + QDir::separator() + outName;
 	else {
-		writePath = info.absolutePath() + QDir::separator() + "读我获取所有文件名.txt";
+		writePath = info.absolutePath() + QDir::separator() + outName;
 		QString absoluteFilePath = info.absoluteFilePath();
 		info.setFile(writePath);
 		writePath = info.absoluteFilePath();

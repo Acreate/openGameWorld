@@ -19,7 +19,7 @@ protected:
 	QIODevice::OpenMode openMode;
 
 public:
-	explicit Base( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Text | QIODeviceBase::Truncate ) : openStatis(0), filePath(new QString(filePath)), fileInDir(new QDir(filePath)), fileInstance(new QFile(filePath)), openMode(openMode) { }
+	explicit Base( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Truncate ) : openStatis(0), filePath(new QString(filePath)), fileInDir(new QDir(filePath)), fileInstance(new QFile(filePath)), openMode(openMode) { }
 
 	/// @brief 尝试打开文件
 	/// @return 失败返回 false

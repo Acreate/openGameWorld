@@ -42,6 +42,12 @@ public:
 		return currentFileInfo->isFile();
 	}
 
+	/// @brief 获取对象指针
+	/// @return 返回对象指针
+	const QSharedPointer<QFileInfo> getQFileInfo( ) const {
+		return this->currentFileInfo;
+	}
+
 	/// @brief 是否文件夹
 	/// @return true 表示文件夹
 	bool isDir( ) const {
@@ -245,6 +251,20 @@ int main( int argc, char *argv[] ) {
 	else
 		currentWorkPath = list[1];
 
+	QString writePath;
+	QFileInfo info(currentWorkPath);
+	// 如果是文件，则检查对应的写入文件
+	if( info.isDir() )
+		writePath = info.absoluteFilePath() + QDir::separator() + "读我获取所有文件名.txt";
+	else {
+		writePath = info.absolutePath() + QDir::separator() + "读我获取所有文件名.txt";
+		QString absoluteFilePath = info.absoluteFilePath();
+		info.setFile(writePath);
+		writePath = info.absoluteFilePath();
+		// 存在对应的文件，则直接退出程序
+		if( absoluteFilePath == writePath )
+			return -1;
+	}
 	DirInfo dirInfo(currentWorkPath);
 	size_t size = dirInfo.getSize();
 	size_t kb = size / 1024;
@@ -277,8 +297,7 @@ int main( int argc, char *argv[] ) {
 	list << dirInfo.toTreeString();
 	list << chars;
 	list << "============";
-
-	auto textInstance = typeFile::generate::file::textInstance("write.txt");
+	auto textInstance = typeFile::generate::file::textInstance(writePath);
 	qsizetype writeContents = textInstance->writeContents(list.join("\n"));
 	return 0;
 }

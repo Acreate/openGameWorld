@@ -21,7 +21,7 @@ public:
 	/// @brief 打开一个文件对象
 	/// @param filePath 文本路径
 	/// @param openMode 打开模式
-	explicit Text( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Text | QIODeviceBase::Truncate )
+	explicit Text( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Truncate )
 		: Base(filePath, openMode), buffInstance(nullptr) { }
 
 	/// @brief 当字符串赋值给对象时候，对象直接写入内容到文件

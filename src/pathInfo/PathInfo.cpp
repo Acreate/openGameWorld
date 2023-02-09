@@ -1,4 +1,5 @@
-﻿#include <ProcessArgs.h>
+﻿#include <iostream>
+#include <ProcessArgs.h>
 #include <ProcessPath.h>
 #include <TypeFile.h>
 #include <TypeText.h>
@@ -169,7 +170,9 @@ public:
 				for( auto iterator = fileNames->begin(), end = fileNames->end(); iterator != end; ++iterator ) {
 					QSharedPointer<DirInfo> fileInfo = QSharedPointer<DirInfo>(new DirInfo(*iterator));
 					subFileInfos->append(fileInfo);
-					result.append("\t" + fileInfo->toQString());
+					QString string = fileInfo->toQString();
+					result.append("\t" + string);
+					std::cout << string.toLocal8Bit().data() << std::endl;
 				}
 				for( auto iterator = dirNames->begin(), end = dirNames->end(); iterator != end; ++iterator ) {
 					QSharedPointer<DirInfo> dirTreeInfo = QSharedPointer<DirInfo>(new DirInfo(*iterator));
@@ -181,8 +184,11 @@ public:
 				}
 			}
 		} else {
-			for( auto iterator = subFileInfos->begin(), end = subFileInfos->end(); iterator != end; ++iterator )
-				result.append("\t" + iterator->data()->toQString());
+			for( auto iterator = subFileInfos->begin(), end = subFileInfos->end(); iterator != end; ++iterator ) {
+				QString string = iterator->data()->toQString();
+				result.append("\t" + string);
+				std::cout << string.toLocal8Bit().data() << std::endl;
+			}
 			for( auto iterator = subDirInfos->begin(), end = subDirInfos->end(); iterator != end; ++iterator ) {
 				result.append("\t" + iterator->data()->toQString());
 				QStringList list = iterator->data()->toSubTreeString();
@@ -212,7 +218,9 @@ public:
 					for( auto iterator = fileNames->begin(), end = fileNames->end(); iterator != end; ++iterator ) {
 						QSharedPointer<DirInfo> fileInfo = QSharedPointer<DirInfo>(new DirInfo(*iterator));
 						subFileInfos->append(fileInfo);
-						result.append("\t" + fileInfo->toQString());
+						QString string = fileInfo->toQString();
+						result.append("\t" + string);
+						std::cout << string.toLocal8Bit().data() << std::endl;
 					}
 					for( auto iterator = dirNames->begin(), end = dirNames->end(); iterator != end; ++iterator ) {
 						QSharedPointer<DirInfo> dirTreeInfo = QSharedPointer<DirInfo>(new DirInfo(*iterator));
@@ -225,13 +233,17 @@ public:
 					}
 				}
 			} else {
-				for( auto iterator = subFileInfos->begin(), end = subFileInfos->end(); iterator != end; ++iterator )
-					result.append("\t" + iterator->data()->toQString());
+				for( auto iterator = subFileInfos->begin(), end = subFileInfos->end(); iterator != end; ++iterator ) {
+					QString string = iterator->data()->toQString();
+					result.append("\t" + string);
+					std::cout << string.toLocal8Bit().data()  << std::endl;
+				}
 				for( auto iterator = subDirInfos->begin(), end = subDirInfos->end(); iterator != end; ++iterator ) {
 					result.append("\t" + iterator->data()->toQString());
 					QStringList list = iterator->data()->toSubTreeString();
-					for( auto listBeg = list.begin(), listEnd = list.end(); listBeg != listEnd; ++listBeg )
+					for( auto listBeg = list.begin(), listEnd = list.end(); listBeg != listEnd; ++listBeg ) {
 						result.append("\t" + *listBeg);
+					}
 				}
 			}
 		}

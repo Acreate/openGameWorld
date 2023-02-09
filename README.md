@@ -43,6 +43,4 @@ qt 6.4.x products
 
 捐赠 >>>>>
 
-![3](README/3.jpg)
-
-![4](README/4.jpg)
+![6](README/6.png)

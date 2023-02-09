@@ -15,6 +15,7 @@ target_link_libraries(${PROJECT_NAME}
          Qt${QT_VERSION_MAJOR}::Core  
         processArgs 
         processPath 
+        typeFile
         )
 
 

@@ -15,20 +15,21 @@ protected:
 	QSharedPointer<QDir> fileInDir;
 	/// @brief 文件操作对象实例
 	QSharedPointer<QFile> fileInstance;
+	/// @brief 打开模式
+	QIODevice::OpenMode openMode;
 
 public:
-	Base(const QString& filePath) : filePath( new QString( filePath ) ), fileInDir( new QDir( filePath ) ), fileInstance( new QFile( filePath ) ) {
-	}
+	explicit Base( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Text | QIODeviceBase::Truncate ) : openStatis(0), filePath(new QString(filePath)), fileInDir(new QDir(filePath)), fileInstance(new QFile(filePath)), openMode(openMode) { }
 
 	/// @brief 尝试打开文件
 	/// @return 失败返回 false
-	bool openFile() {
+	bool openFile( ) {
 		// 已经打开，则返回非法
 		if( this->openStatis != 0 )
 			return false;
 		// 设置为非法打开
 		this->openStatis = -1;
-		if( !fileInstance->open( QIODeviceBase::ReadWrite | QIODeviceBase::Text ) )
+		if( !fileInstance->open(openMode) )
 			return false;
 		// 设置正常读写状态
 		this->openStatis = 1;
@@ -37,12 +38,12 @@ public:
 
 	/// @brief 是否能打开文件，该操作会尝试打开文件
 	/// @return 失败返回 false
-	inline bool isCanOpen() {
+	inline bool isCanOpen( ) {
 		return this->openStatis > 0 || openFile();
 	}
 
 	/// @brief 关闭文件
-	void closeFile() {
+	void closeFile( ) {
 		if( fileInstance->isOpen() ) {
 			fileInstance->close();
 			openStatis = 0;

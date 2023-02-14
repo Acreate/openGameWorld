@@ -2,10 +2,20 @@ cmake_minimum_required(VERSION 3.5)
 
 project(openGameWorld VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+SET(DEPLOY_QT_HOME "C:/Qt/6.4.2/msvc2019_64/")
+SET(CMAKE_PREFIX_PATH ${DEPLOY_QT_HOME})
+SET(QT_DIR "${DEPLOY_QT_HOME}lib/cmake/Qt6")
+SET(QT_QMAKE_EXECUTABLE "${DEPLOY_QT_HOME}/bin/qmake.exe")
+SET(Qt6CoreTools_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6CoreTools")
+SET(Qt6Core_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6Core")
+SET(Qt6EntryPointPrivate_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6EntryPointPrivate")
+SET(Qt6ZlibPrivate_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6ZlibPrivate")
+SET(Qt6_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6")
+SET(WINDEPLOYQT_EXECUTABLE "${DEPLOY_QT_HOME}/bin/windeployqt.exe")
+SET(CMAKE_PROJECT_INCLUDE_BEFORE "C:/Qt/Tools/QtCreator/share/qtcreator/package-manager/auto-setup.cmake")
 
+
+list(APPEND CMAKE_MSVCIDE_RUN_PATH "${DEPLOY_QT_HOME}/bin")
 
 SET( CMAKE_C_STANDARD 99 )
 SET( CMAKE_C_STANDARD_REQUIRED ON )
@@ -15,22 +25,27 @@ SET( CMAKE_CXX_STANDARD 17 )
 SET( CMAKE_CXX_STANDARD_REQUIRED ON )
 SET( CMAKE_CXX_VISIBILITY_PRESET hidden )
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
-
-
 INCLUDE( GenerateExportHeader )
 INCLUDE( GNUInstallDirs )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
 
-ADD_SUBDIRECTORY(src/processArgs)
-ADD_SUBDIRECTORY(src/processPath)
-ADD_SUBDIRECTORY(src/typeFile)
-ADD_SUBDIRECTORY(src/typeSql)
-ADD_SUBDIRECTORY(src/moveFile)
-ADD_SUBDIRECTORY(src/createFileTemplates)
-ADD_SUBDIRECTORY(src/editResources)
-ADD_SUBDIRECTORY(src/pathInfo)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+
+ADD_SUBDIRECTORY(src/libs/processArgs)
+ADD_SUBDIRECTORY(src/libs/processPath)
+ADD_SUBDIRECTORY(src/libs/typeFile)
+ADD_SUBDIRECTORY(src/libs/typeSql)
+ADD_SUBDIRECTORY(src/libs/bitConver)
+
+ADD_SUBDIRECTORY(src/consoles/moveFile)
+ADD_SUBDIRECTORY(src/consoles/createFileTemplates)
+ADD_SUBDIRECTORY(src/consoles/pathInfo)
+
+ADD_SUBDIRECTORY(src/uis/editResources)

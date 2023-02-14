@@ -7,14 +7,14 @@ QSharedPointer<typeFile::TextBuff> typeFile::Text::getTextBuff( ) {
 	return buffInstance;
 }
 
-QString typeFile::Text::readContents( const uint64_t &size ) {
+QString typeFile::Text::readContents( const uint64_t size ) {
 	// 未初始化，则自动初始化
 	if( ! isCanOpen() )
 		return "";
 	return fileInstance->readLine(size);
 }
 
-qsizetype typeFile::Text::writeContents( const QString &strContent, const qsizetype &writeCount ) {
+qsizetype typeFile::Text::writeContents( const QString &strContent, const qsizetype writeCount ) {
 	// 保存写入个数
 	qsizetype overWriteCount = 0;
 	// 字符串长度
@@ -40,7 +40,7 @@ qsizetype typeFile::Text::writeContents( const QString &strContent, const qsizet
 	return overWriteCount;
 }
 
-qsizetype typeFile::Text::writeContentsAtTextBuffInstance( const qsizetype &writeCount ) {
+qsizetype typeFile::Text::writeContentsAtTextBuffInstance( const qsizetype writeCount ) {
 	qint64 textContentsLen = writeContents(buffInstance->getContent(), writeCount);
 	buffInstance->clear();
 	return textContentsLen;

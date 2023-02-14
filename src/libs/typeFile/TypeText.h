@@ -44,17 +44,17 @@ public:
 	/// @brief 读取文件内容
 	/// @param size 读取数量
 	/// @return 末尾返回空
-	QString readContents( const uint64_t &size = 1024 );
+	QString readContents( const uint64_t size = 1024 );
 	/// @brief 往文件写入内容
 	/// @param strContent 写入的内容
 	/// @param writeCount 写入个数，小于 1 为一次性全部写入
 	/// @return 写入个数
-	qsizetype writeContents( const QString &strContent, const qsizetype &writeCount = 0 );
+	qsizetype writeContents( const QString &strContent, const qsizetype writeCount = 0 );
 
 	/// @brief 使用缓冲对象进行写入
 	///	@param  writeCount 建议写入个数
 	///	@return 写入个数
-	inline qsizetype writeContentsAtTextBuffInstance( const qsizetype &writeCount = 0 );
+	qsizetype writeContentsAtTextBuffInstance( const qsizetype writeCount = 0 );
 
 	/// @brief 设置当前文件的读取下标位置
 	/// @param index 下标位置

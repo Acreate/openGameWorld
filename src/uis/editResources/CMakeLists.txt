@@ -1,7 +1,13 @@
 project(editResources  VERSION 0.1 LANGUAGES CXX)
 
+include_directories(../libs/processArgs)
+include_directories(../libs/processPath)
+include_directories(../libs/bitConver)
+
+
 # 当前目录下也有代码
-aux_source_directory(. SRC_LIST)
+
+FILE(GLOB SRC_LIST "*.cpp" "*.c" "*.hpp" "*.h")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable( ${PROJECT_NAME}
@@ -24,7 +30,13 @@ else()
     endif()
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(${PROJECT_NAME} 
+PRIVATE 
+    Qt${QT_VERSION_MAJOR}::Widgets
+    bitConver
+    processArgs
+    processPath
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

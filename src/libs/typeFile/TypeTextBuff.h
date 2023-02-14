@@ -2,7 +2,7 @@
 #define TEXTBUFF_H_HEAD__FILE__
 
 #pragma once
-#include "typeFile_export.h"
+#include "TypeFile_export.h"
 #include <QSharedPointer>
 #include <QString>
 

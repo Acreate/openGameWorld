@@ -32,7 +32,6 @@ public:
 	/// @param name 选项名称
 	/// @param values 选项内容
 	/// @param clearFlag 是否清除旧内容
-	/// @return 名称旧的内容
 	void setArgValue(const QString& name, const QVector<QString>& values, const bool clearFlag = false);
 	/// @brief 清空指定的参数名
 	/// @param name 参数名
@@ -46,7 +45,6 @@ public:
 	/// @param name 环境变量名称
 	/// @param values 环境变量列表
 	/// @param clearFlag 是否清除旧内容
-	/// @return 旧的变量列表
 	void setEnvValue(const QString& name, const QVector<QString>& values, const bool clearFlag = false);
 
 	/// @brief 获取所有环境变量名称

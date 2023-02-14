@@ -1,8 +1,8 @@
 ﻿#include <QCoreApplication>
-#include "ProcessArgs.h"
-#include "typeFile.h"
-#include "typeText.h"
-#include "typeTextBuff.h"
+#include <ProcessArgs.h>
+#include <TypeFile.h>
+#include <TypeText.h>
+#include <TypeTextBuff.h>
 
 int main(int argc, char* argv[]) {
 	ProcessArgs process( argc, argv );

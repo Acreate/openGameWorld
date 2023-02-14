@@ -1,9 +1,13 @@
 ﻿#include "ProcessArgs.h"
 #include <stdlib.h>
+
+#include <stdio.h>
 #include <mutex>
 #include <thread>
 #include <qDebug>
 #include <vector>
+
+extern char ** environ;
 /// @brief 进程参数
 QMap<QString, QVector<QString> > ProcessArgs::processArgs;
 /// @brief 进程环境变量

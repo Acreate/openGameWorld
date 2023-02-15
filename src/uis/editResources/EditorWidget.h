@@ -7,7 +7,7 @@ class EditorWidget : public QWidget {
 	Q_OBJECT
 
 public:
-	EditorWidget( QWidget *parent = nullptr );
-	~EditorWidget( );
+	explicit EditorWidget( QWidget *parent = nullptr );
+	~EditorWidget( ) override;
 };
 #endif // EDITORWIDGET_H

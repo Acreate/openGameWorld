@@ -3,6 +3,7 @@
 #include <ProcessPath.h>
 #include <TypeFile.h>
 #include <TypeText.h>
+#include <QtGui/qguiapplication.h>
 
 /// @brief 统计文件大小
 /// @param fileNames 文件列表
@@ -252,8 +253,14 @@ public:
 
 };
 
+class App : public ProcessArgs, public QCoreApplication {
+public:
+	App( int &argc, char **argv )
+		: ProcessArgs(argc, argv), QCoreApplication(argc, argv) {}
+};
+
 int main( int argc, char *argv[] ) {
-	ProcessArgs app(argc, argv);
+	App app(argc, argv);
 
 	auto appArg = app.getArgOptions();
 	QList<QString> list = appArg[""];

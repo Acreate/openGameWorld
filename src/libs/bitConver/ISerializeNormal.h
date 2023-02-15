@@ -6,7 +6,7 @@
 
 namespace serializeNormal {
 	/// @brief 序列化对象接口
-	class ISerializeNormal {
+	class BITCONVER_EXPORT ISerializeNormal {
 	public:
 		virtual ~ISerializeNormal( ) = default;
 
@@ -17,7 +17,7 @@ namespace serializeNormal {
 		/// @brief 从一个数据中设置该对象实例
 		/// @param dataBytes 输入数据
 		/// @return 成功返回 true
-		virtual bool serializeInstance( const QVector<char> &dataBytes ) = 0;
+		virtual size_t serializeInstance( const QVector<char> &dataBytes ) = 0;
 
 	};
 }

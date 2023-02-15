@@ -77,7 +77,7 @@ static void fullEnv( QMap<QString, QVector<QString> > &envMap ) {
 	}
 }
 
-ProcessArgs::ProcessArgs( int &argc, char **argv ) : QCoreApplication(argc, argv) {
+ProcessArgs::ProcessArgs( int &argc, char **argv ) {
 	if( !isInitVal ) {
 		isInitVal = true;
 		/// 填充环境变量

@@ -36,8 +36,15 @@ void FileContrnRunnable::run( ) {
 		std::cout << oldName.toLocal8Bit().data() << std::endl;
 }
 
+class App : public ProcessArgs, public QCoreApplication {
+public:
+	App( int &argc, char **argv )
+		: ProcessArgs(argc, argv), QCoreApplication(argc, argv) {}
+};
+
+
 int main( int argc, char *argv[] ) {
-	ProcessArgs appProcess(argc, argv);
+	App appProcess(argc, argv);
 	auto argOptions = appProcess.getArgOptions();
 	auto iterator = argOptions.begin();
 	const auto &end = argOptions.end();

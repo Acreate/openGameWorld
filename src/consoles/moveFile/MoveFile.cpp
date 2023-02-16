@@ -1,4 +1,8 @@
-﻿#include <iostream>
+﻿/******
+ * 2023.02.16.21.56.24 : 修复移动工具的已知bug(上级相同目录不做功的情况)
+ */
+
+#include <iostream>
 #include <ProcessArgs.h>
 #include <ProcessPath.h>
 #include <QFile>
@@ -30,9 +34,11 @@ public:
 };
 
 void FileContrnRunnable::run( ) {
-	if( !isCopy && QFile::rename(oldName, newName) )
-		std::cout << oldName.toLocal8Bit().data() << std::endl;
-	else if( QFile::copy(oldName, newName) )
+	if( !isCopy ) {
+		bool isRename = QFile::rename(oldName, newName);
+		if( isRename )
+			std::cout << oldName.toLocal8Bit().data() << std::endl;
+	} else if( QFile::copy(oldName, newName) )
 		std::cout << oldName.toLocal8Bit().data() << std::endl;
 }
 
@@ -41,6 +47,78 @@ public:
 	App( int &argc, char **argv )
 		: ProcessArgs(argc, argv), QCoreApplication(argc, argv) {}
 };
+
+/// @brief 把 oldPath 下的所有文件与目录移动到 newPath 当中，当 newPtah 当中出现重叠文件内容时，返回 false
+/// @param oldPath 旧的路径
+/// @param newPath 新的路径
+/// @return 成功返回 true
+bool moveDirContentToPath( QString oldPath, QString newPath ) {
+
+	QDir oldInfo(oldPath), newInfo(newPath);
+	oldPath = oldInfo.absolutePath();
+	newPath = newInfo.absolutePath();
+	QFileInfoList oldFileInfoList = oldInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
+	qsizetype oldPathNameCount = oldFileInfoList.length();
+	if( oldPathNameCount == 0 )
+		return false;
+
+	QFileInfoList existsFileInfoList = newInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
+	QMap<QString, QString> changeMap;
+	qsizetype existsPathNameCount = existsFileInfoList.length();
+	qsizetype oldIndex = 0;
+	if( existsPathNameCount > 0 ) {
+		qsizetype newIndex = 0;
+		QString oldBaseName = oldInfo.dirName().remove(oldPath);
+		for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
+			QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
+			QString oldName = oldFileInfo.fileName();
+			for( newIndex = 0; newIndex < existsPathNameCount; ++newIndex ) {
+				QFileInfo existsFileInfo = existsFileInfoList[newIndex];
+				QString existsName = existsFileInfo.fileName();
+				if( oldBaseName != existsName && existsName == oldName ) {
+					// todo:若一方为文件夹与文件的相对存在？
+					return false;
+				}
+			}
+			QString orgPath = oldFileInfo.absoluteFilePath(),
+				movePath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
+			changeMap.insert(orgPath, movePath);
+		}
+		QMap<QString, QString>::iterator
+			iterator = changeMap.begin(),
+			end = changeMap.end();
+		QFileInfo changeFileInfo;
+		QDir changeDir;
+		for( ; iterator != end; ++iterator ) {
+			QString orgPath = iterator.key();
+			QString targetPath = iterator.value();
+			changeFileInfo.setFile(orgPath);
+			if( changeFileInfo.isFile() ) {
+				QFile::rename(orgPath, targetPath);
+			} else if( changeFileInfo.isDir() ) {
+				changeDir.rename(orgPath, targetPath);
+			}
+		}
+
+	} else {
+		QFileInfo changeFileInfo;
+		QDir changeDir;
+		for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
+			QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
+			QString orgPath = oldFileInfo.absoluteFilePath(),
+				targetPath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
+			changeFileInfo.setFile(orgPath);
+			if( changeFileInfo.isFile() ) {
+				QFile::rename(orgPath, targetPath);
+			} else if( changeFileInfo.isDir() ) {
+				changeDir.rename(orgPath, targetPath);
+			}
+		}
+	}
+
+
+	return true;
+}
 
 
 int main( int argc, char *argv[] ) {
@@ -94,7 +172,6 @@ int main( int argc, char *argv[] ) {
 			++parCount;
 		}
 	}
-
 	if( sourcePath.isEmpty() )
 		sourcePath = path::App::getWorkPath();
 	if( desPath.isEmpty() )
@@ -148,7 +225,15 @@ int main( int argc, char *argv[] ) {
 			for( auto iter = buffDirNames->begin(), iterEnd = buffDirNames->end(); iter != iterEnd; ++iter ) {
 				QString oldName = iter->data()->absoluteFilePath();
 				QString newName = savePath + iter->data()->fileName();
-				qdir.rename(oldName, newName);
+				if( QFile::exists(newName) ) {
+					if( moveDirContentToPath(oldName, newName) )
+						std::cout << oldName.toLocal8Bit().data() << std::endl;
+				} else {
+					bool isDirReName = qdir.rename(oldName, newName);
+					if( isDirReName )
+						std::cout << oldName.toLocal8Bit().data() << std::endl;
+				}
+
 			}
 			dirsInCurrentPathNames.clear();
 			dirsInCurrentPathNames = buffDirNames;

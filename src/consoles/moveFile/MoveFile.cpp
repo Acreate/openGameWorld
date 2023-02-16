@@ -53,71 +53,72 @@ public:
 /// @param newPath 新的路径
 /// @return 成功返回 true
 bool moveDirContentToPath( QString oldPath, QString newPath ) {
-
 	QDir oldInfo(oldPath), newInfo(newPath);
-	oldPath = oldInfo.absolutePath();
-	newPath = newInfo.absolutePath();
-	QFileInfoList oldFileInfoList = oldInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
-	qsizetype oldPathNameCount = oldFileInfoList.length();
-	if( oldPathNameCount == 0 )
-		return false;
+	{
+		oldPath = oldInfo.absolutePath();
+		newPath = newInfo.absolutePath();
+		QFileInfoList oldFileInfoList = oldInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
+		qsizetype oldPathNameCount = oldFileInfoList.length();
+		if( oldPathNameCount != 0 ) {
+			QDir changeDir;
+			QFileInfoList existsFileInfoList = newInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
+			QMap<QString, QString> changeMap;
+			qsizetype existsPathNameCount = existsFileInfoList.length();
+			qsizetype oldIndex = 0;
+			if( existsPathNameCount > 0 ) {
+				qsizetype newIndex = 0;
+				QString oldBaseName = oldInfo.dirName().remove(oldPath);
+				for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
+					QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
+					QString oldName = oldFileInfo.fileName();
+					for( newIndex = 0; newIndex < existsPathNameCount; ++newIndex ) {
+						QFileInfo existsFileInfo = existsFileInfoList[newIndex];
+						QString existsName = existsFileInfo.fileName();
+						if( oldBaseName != existsName && existsName == oldName ) {
+							// todo:若一方为文件夹与文件的相对存在？
+							return false;
+						}
+					}
+					QString orgPath = oldFileInfo.absoluteFilePath(),
+						movePath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
+					changeMap.insert(orgPath, movePath);
+				}
+				QMap<QString, QString>::iterator
+					iterator = changeMap.begin(),
+					end = changeMap.end();
+				QFileInfo changeFileInfo;
+				for( ; iterator != end; ++iterator ) {
+					QString orgPath = iterator.key();
+					QString targetPath = iterator.value();
+					changeFileInfo.setFile(orgPath);
+					if( changeFileInfo.isFile() ) {
+						QFile::rename(orgPath, targetPath);
+					} else if( changeFileInfo.isDir() ) {
+						changeDir.rename(orgPath, targetPath);
+					}
+				}
 
-	QFileInfoList existsFileInfoList = newInfo.entryInfoList(QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot);
-	QMap<QString, QString> changeMap;
-	qsizetype existsPathNameCount = existsFileInfoList.length();
-	qsizetype oldIndex = 0;
-	if( existsPathNameCount > 0 ) {
-		qsizetype newIndex = 0;
-		QString oldBaseName = oldInfo.dirName().remove(oldPath);
-		for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
-			QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
-			QString oldName = oldFileInfo.fileName();
-			for( newIndex = 0; newIndex < existsPathNameCount; ++newIndex ) {
-				QFileInfo existsFileInfo = existsFileInfoList[newIndex];
-				QString existsName = existsFileInfo.fileName();
-				if( oldBaseName != existsName && existsName == oldName ) {
-					// todo:若一方为文件夹与文件的相对存在？
-					return false;
+			} else {
+				QFileInfo changeFileInfo;
+				for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
+					QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
+					QString orgPath = oldFileInfo.absoluteFilePath(),
+						targetPath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
+					changeFileInfo.setFile(orgPath);
+					if( changeFileInfo.isFile() ) {
+						QFile::rename(orgPath, targetPath);
+					} else if( changeFileInfo.isDir() ) {
+						changeDir.rename(orgPath, targetPath);
+					}
 				}
 			}
-			QString orgPath = oldFileInfo.absoluteFilePath(),
-				movePath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
-			changeMap.insert(orgPath, movePath);
-		}
-		QMap<QString, QString>::iterator
-			iterator = changeMap.begin(),
-			end = changeMap.end();
-		QFileInfo changeFileInfo;
-		QDir changeDir;
-		for( ; iterator != end; ++iterator ) {
-			QString orgPath = iterator.key();
-			QString targetPath = iterator.value();
-			changeFileInfo.setFile(orgPath);
-			if( changeFileInfo.isFile() ) {
-				QFile::rename(orgPath, targetPath);
-			} else if( changeFileInfo.isDir() ) {
-				changeDir.rename(orgPath, targetPath);
-			}
-		}
+		} else
+			return false;
 
-	} else {
-		QFileInfo changeFileInfo;
-		QDir changeDir;
-		for( oldIndex = 0; oldIndex < oldPathNameCount; ++oldIndex ) {
-			QFileInfo oldFileInfo = oldFileInfoList[oldIndex];
-			QString orgPath = oldFileInfo.absoluteFilePath(),
-				targetPath = oldFileInfo.absoluteFilePath().replace(oldPath, newPath);
-			changeFileInfo.setFile(orgPath);
-			if( changeFileInfo.isFile() ) {
-				QFile::rename(orgPath, targetPath);
-			} else if( changeFileInfo.isDir() ) {
-				changeDir.rename(orgPath, targetPath);
-			}
-		}
 	}
 
-
-	return true;
+	bool remove = oldInfo.removeRecursively();
+	return remove;
 }
 
 

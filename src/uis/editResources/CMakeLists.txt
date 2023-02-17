@@ -2,6 +2,7 @@ project(editResources  VERSION 0.1 LANGUAGES CXX)
 
 include_directories(../libs/processArgs)
 include_directories(../libs/processPath)
+include_directories(../libs/typeFile)
 include_directories(../libs/bitConver)
 
 
@@ -36,6 +37,7 @@ PRIVATE
 	bitConver
 	processArgs
 	processPath
+	typeFile
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

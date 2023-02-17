@@ -19,6 +19,12 @@ namespace serializeNormal {
 		/// @return 成功返回 true
 		virtual size_t serializeInstance( const QVector<char> &dataBytes ) = 0;
 
+		/// @brief 从一个数据中设置该对象实例
+		/// @param dataBytes 输入数据
+		/// @param dataSize 输入数据的大小（长度）
+		/// @return 成功返回 true
+		virtual size_t serializeInstance( const char *dataBytes, size_t dataSize ) = 0;
+
 	};
 }
 

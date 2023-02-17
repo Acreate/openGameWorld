@@ -10,6 +10,7 @@
 /// @brief 类型操作对象名称空间
 namespace typeFile {
 	class TYPEFILE_EXPORT Base;
+	class TYPEFILE_EXPORT Byte;
 	class TYPEFILE_EXPORT Text;
 	class TYPEFILE_EXPORT TextBuff;
 	class TYPEFILE_EXPORT Xml;

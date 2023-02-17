@@ -5,9 +5,9 @@
 #include "BitConver.h"
 #include "ISerializeNormal.h"
 
-namespace dataChecks {
-	class BITCONVER_EXPORT DataCheck : serializeNormal::ISerializeNormal {
-	private:
+namespace serializeNormal {
+	class BITCONVER_EXPORT DataCheck : ISerializeNormal {
+	protected:
 		/// @brief 指定 data 的大小
 		qsizetype dataSize;
 		/// @brief 对象数据
@@ -18,7 +18,7 @@ namespace dataChecks {
 	public:
 		DataCheck( ) {
 			dataSize = 0;
-			data = nullptr;
+			data = QSharedPointer<QVector<char> >(new QList<char>());
 		}
 
 		/// @brief 使用一段数据初始化对象，该数据应该仅仅是数据，并不附带任何其他信息
@@ -26,8 +26,7 @@ namespace dataChecks {
 		/// @param data 转换的数据
 		explicit DataCheck( const QVector<char> &data ) {
 			dataSize = data.length();
-			if( dataSize > 0 )
-				this->data = QSharedPointer<QVector<char> >(new QList<char>(data));
+			this->data = QSharedPointer<QVector<char> >(new QList<char>(data));
 		}
 
 		/// @brief 对象转换为数据
@@ -44,16 +43,29 @@ namespace dataChecks {
 			return nullptr;
 		}
 
+		size_t serializeInstance( const char *dataBytes, size_t dataSize ) override {
+			size_t useCodeCount = bitConver::set::bytes(dataBytes, dataSize, &this->dataSize);
+			if( this->dataSize <= (dataSize - useCodeCount) ) {
+				data.clear();
+				for( size_t index = useCodeCount; index < this->dataSize; ++index )
+					data->append(dataBytes[index]);
+			}
+
+			return 0;
+		}
+
 		/// @brief 从一段数据中还原对象
 		/// @param dataBytes 数据，该数据应该包含持有的附加信息
 		/// @return 成功返回 true
 		size_t serializeInstance( const QVector<char> &dataBytes ) override {
-			if( bitConver::set::bytes(dataBytes, &dataSize) ) {
+			size_t useCodeCount = bitConver::set::bytes(dataBytes, &this->dataSize);
+			qsizetype length = dataBytes.length();
+			if( this->dataSize <= (length - useCodeCount) ) {
 				QVector<char> *list = new QVector<char>(dataSize);
-				this->data = QSharedPointer<QVector<char> >(list);
+				this->data.clear();
 				size_t index = 0;
 				char *pointer = list->data();
-				for( ; index < dataSize; ++index )
+				for( ; index < length; ++index )
 					pointer[index] = data->at(index);
 				return index;
 			}

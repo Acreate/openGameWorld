@@ -21,7 +21,7 @@ public:
 	/// @brief 打开一个文件对象
 	/// @param filePath 文本路径
 	/// @param openMode 打开模式
-	explicit Text( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Truncate )
+	explicit Text( const QString &filePath, QIODevice::OpenMode openMode = QIODeviceBase::ReadWrite | QIODeviceBase::Text )
 		: Base(filePath, openMode), buffInstance(nullptr) { }
 
 	/// @brief 当字符串赋值给对象时候，对象直接写入内容到文件
@@ -60,7 +60,14 @@ public:
 	/// @param index 下标位置
 	/// @return 设置好的下标位置
 	qsizetype setTextPointIndex( const qsizetype &index ) {
-		if( isCanOpen() ) {
+
+		if( !fileInstance->isOpen() ) {
+			QFileInfo info(*filePath);
+			if( info.exists() && isCanOpen() ) {
+				fileInstance->seek(index);
+				return fileInstance->pos();
+			}
+		} else {
 			fileInstance->seek(index);
 			return fileInstance->pos();
 		}
@@ -71,17 +78,26 @@ public:
 	/// @param len 增量
 	/// @return 当前下标位置
 	qsizetype addTextPointIndex( const qsizetype &len ) {
-		if( isCanOpen() ) {
+
+		if( !fileInstance->isOpen() ) {
+			QFileInfo info(*filePath);
+			if( info.exists() && isCanOpen() ) {
+				fileInstance->seek(len + fileInstance->pos());
+				return fileInstance->pos();
+			}
+		} else {
 			fileInstance->seek(len + fileInstance->pos());
 			return fileInstance->pos();
 		}
+
 		return 0;
 	}
 
 	/// @brief 获取文件大小
 	/// @return 文件的大小
 	qsizetype getTextSize( ) {
-		if( isCanOpen() )
+		QFileInfo info(*filePath);
+		if( info.exists() && isCanOpen() )
 			return fileInstance->size();
 		return 0;
 	}
@@ -89,25 +105,31 @@ public:
 	/// @brief 参数文件，不存在则会删除失败
 	/// @return true 表示删除成功，否则失败
 	bool reamove( ) {
-		if( fileInDir->exists() && !isCanOpen() )
-			return false;
-		bool fileStatisResult = fileInstance->remove();
-		fileInstance->close();
-		openStatis = 0;
-		return fileStatisResult;
+		QFileInfo info(*filePath);
+		if( info.exists() )
+			if( isCanOpen() ) {
+				bool fileStatisResult = fileInstance->remove();
+				fileInstance->close();
+				openStatis = 0;
+				return fileStatisResult;
+			}
+		return false;
 	}
 
 	/// @brief 重命名文件，不存在文件则失败
 	/// @param newName 新的文件名
 	/// @return 成功返回 true
 	bool reNameFile( const QString &newName ) {
-		if( fileInDir->exists() && !isCanOpen() )
-			return false;
-		bool fileStatisResult = fileInstance->rename(newName);
-		return fileStatisResult;
+		QFileInfo info(*filePath);
+		if( info.exists() )
+			if( isCanOpen() ) {
+				bool fileStatisResult = fileInstance->rename(newName);
+				return fileStatisResult;
+			}
+		return false;
 	}
 
-	virtual ~Text( ) {
+	~Text( ) override {
 		closeFile();
 	}
 };

@@ -8,10 +8,12 @@ QSharedPointer<typeFile::TextBuff> typeFile::Text::getTextBuff( ) {
 }
 
 QString typeFile::Text::readContents( const uint64_t size ) {
+
+	QFileInfo info(*filePath);
 	// 未初始化，则自动初始化
-	if( ! isCanOpen() )
-		return "";
-	return fileInstance->readLine(size);
+	if( info.exists() && isCanOpen() )
+		return fileInstance->readLine(size);
+	return "";
 }
 
 qsizetype typeFile::Text::writeContents( const QString &strContent, const qsizetype writeCount ) {

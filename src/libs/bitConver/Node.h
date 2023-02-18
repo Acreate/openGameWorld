@@ -24,6 +24,7 @@ namespace serializeNormal {
 			QSharedPointer<DataCheck> left;
 			QSharedPointer<DataCheck> right;
 			virtual ~Propertys( ) { }
+
 			explicit Propertys( const QSharedPointer<DataCheck> left, const QSharedPointer<DataCheck> right ) {
 				if( left )
 					this->left = left;
@@ -50,41 +51,42 @@ namespace serializeNormal {
 	protected:
 		/// @brief 节点名称
 		QString name;
-		QVector<Propertys> subChilder;
+		QVector<QSharedPointer<Propertys> > subChilder;
 
 	public:
 		/// @brief 追加一个成员到子节点当中
 		void append( const QSharedPointer<DataCheck> left, const QSharedPointer<DataCheck> right ) {
-			subChilder.append(Propertys(left, right));
+			subChilder.append(QSharedPointer<Propertys>(new Propertys(left, right)));
 			dataSize += 1;
 		}
 
-		/// @brief 返回
-		/// @return 
-		Propertys *getDataPtr( ) {
+		/// @brief 返回指向第一个元素的数据指针
+		/// @return 若不存在元素则返回 nullptr
+		QSharedPointer<Propertys> *getDataPtr( ) {
 			if( dataSize > 0 )
 				return subChilder.data();
 			return nullptr;
 		}
 
-		/// @brief 返回对应下标位置，若超出长度，则返回末尾
+		/// @brief 返回对应下标位置
 		/// @param index 下标位置
 		/// @return 返回对象
-		Propertys getIndex( int32_t index ) {
-			if( dataSize >= index )
-				return subChilder.last();
+		QSharedPointer<Propertys> getIndex( int32_t index ) {
+
+			if( dataSize == 0 || dataSize >= index )
+				return nullptr;
 			return subChilder[index];
 		}
 
-		/// @brief 设置到对应的下标位置，若下标大于长度，则设置到末尾
+		/// @brief 设置到对应的下标位置
 		/// @param index 下标位置
 		/// @param property 设置对象
 		/// @return 成功返回 true
 		bool setIndex( int32_t index, const Propertys &property ) {
 			if( dataSize > index )
-				subChilder[index] = property;
+				subChilder[index] = QSharedPointer<Propertys>(new Propertys(property));
 			else
-				subChilder.append(property);
+				return false;
 			return true;
 		}
 
@@ -107,9 +109,9 @@ namespace serializeNormal {
 			bytes->append(*bitConver::get::bytes(this->dataSize));
 			if( dataSize )
 				for( decltype(dataSize) index = 0; index < dataSize; ++index ) {
-					QVector<Propertys>::Type propertys = subChilder[index];
-					bytes->append(*propertys.left->serializeInstance());
-					bytes->append(*propertys.right->serializeInstance());
+					QSharedPointer<Propertys> propertys = subChilder[index];
+					bytes->append(*propertys->left->serializeInstance());
+					bytes->append(*propertys->right->serializeInstance());
 				}
 			// 已经确定的字节码长度
 			QSharedPointer<QVector<char> > targetBitys = bitConver::get::bytes(bytes->length());
@@ -156,7 +158,7 @@ namespace serializeNormal {
 					if( buffCount == useCodeCount )
 						break;
 					useCodeCount = buffCount;
-					subChilder.append(Propertys(left, right));
+					subChilder.append(QSharedPointer<Propertys>(new Propertys(left, right)));
 				}
 			}
 			if( this->dataSize != subChilder.length() ) {

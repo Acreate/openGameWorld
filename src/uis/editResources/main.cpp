@@ -18,9 +18,9 @@ int main( int argc, char *argv[] ) {
 			qDebug() << "转化实现";
 			auto propertys = node1.getIndex(0);
 			QString msg;
-			bitConver::set::bytes(propertys.left->getData(), &msg);
+			bitConver::set::bytes(propertys->left->getData(), &msg);
 			qDebug() << "propertys.left : " << msg;
-			bitConver::set::bytes(propertys.right->getData(), &msg);
+			bitConver::set::bytes(propertys->right->getData(), &msg);
 			qDebug() << "propertys.right : " << msg;
 		}
 	}

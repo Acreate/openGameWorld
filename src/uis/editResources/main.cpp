@@ -26,6 +26,11 @@ int main( int argc, char *argv[] ) {
 			qDebug() << "propertys.right : " << msg;
 		}
 	}
+	typeFile::Byte binFile("out.bin", QIODevice::ReadWrite | QIODevice::Truncate);
+	QSharedPointer<QVector<char> > contents = node1.serializeInstance();
+	char *pointer1 = contents.data()->data();
+
+	binFile.writeFile(pointer1, contents->length());
 	int32_t test = 32, testOut = 0;
 	QSharedPointer<QVector<char> > sharedPointer = bitConver::get::bytes(test);
 

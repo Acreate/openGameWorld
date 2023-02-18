@@ -47,6 +47,12 @@ public:
 			openStatis = 0;
 		}
 	}
+	
+	/// @brief 刷入缓冲
+	inline virtual void flush( ) {
+		if( fileInstance->isOpen() )
+			fileInstance->flush();
+	}
 };
 
 #endif // TYPEBASE_H_HEAD__FILE__

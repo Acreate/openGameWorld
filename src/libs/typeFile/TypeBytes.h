@@ -39,6 +39,7 @@ public:
 	/// @param str 字符串
 	/// @return 写入个数
 	size_t writeFile( const QString &str );
+
 };
 
 

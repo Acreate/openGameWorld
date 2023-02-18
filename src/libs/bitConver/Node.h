@@ -98,27 +98,33 @@ namespace serializeNormal {
 		QSharedPointer<QVector<char> > serializeInstance( ) override {
 
 			// 名称字节码
-			QSharedPointer<QVector<char> > bytes;
+			QSharedPointer<QVector<char> > bytes(new QVector<char>);
 
-			QSharedPointer<QVector<char> > nameCharVector = bitConver::get::bytes(name);
+			QSharedPointer<QVector<char> > buffVector = bitConver::get::bytes(name);
+			int32_t length = buffVector->length();
+			QSharedPointer<QVector<char> > list = bitConver::get::bytes(length);
 			// 名称消费长度
-			bytes->append(*bitConver::get::bytes(nameCharVector->length()));
+			bytes->append(*list);
 			// 追加名称
-			bytes->append(*nameCharVector);
+			bytes->append(*buffVector);
+			buffVector = bitConver::get::bytes(this->dataSize);
 			// 追加子节点个数
-			bytes->append(*bitConver::get::bytes(this->dataSize));
+			bytes->append(*buffVector);
 			if( dataSize )
 				for( decltype(dataSize) index = 0; index < dataSize; ++index ) {
 					QSharedPointer<Propertys> propertys = subChilder[index];
-					bytes->append(*propertys->left->serializeInstance());
-					bytes->append(*propertys->right->serializeInstance());
+					buffVector = propertys->left->serializeInstance();
+					bytes->append(*buffVector);
+					buffVector = propertys->right->serializeInstance();
+					bytes->append(*buffVector);
 				}
 			// 已经确定的字节码长度
-			QSharedPointer<QVector<char> > targetBitys = bitConver::get::bytes(bytes->length());
+			length = bytes->length();
+			buffVector = bitConver::get::bytes(length);
 			// 追加整个字节码
-			targetBitys.data()->append(*bytes);
+			buffVector.data()->append(*bytes);
 			// 返回整个序列化
-			return targetBitys;
+			return buffVector;
 		}
 
 		QSharedPointer<QVector<char> > serializeInstance( const char *dataBytes, size_t dataSize ) override {

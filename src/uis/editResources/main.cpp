@@ -12,11 +12,17 @@ int main( int argc, char *argv[] ) {
 	serializeNormal::Node<serializeNormal::DataCheck, serializeNormal::DataCheck> node1;
 	QSharedPointer<QVector<char> > fileBytes = byte.readFile();
 	if( fileBytes.get() ) {
-		// todo : 获取到的文件内容
 		qDebug() << "获取到文本了";
 		QSharedPointer<QVector<char> > list = node1.serializeInstance(*fileBytes);
-		if( list->length() > 0 )
+		if( list->length() > 0 ) {
 			qDebug() << "转化实现";
+			auto propertys = node1.getIndex(0);
+			QString msg;
+			bitConver::set::bytes(propertys.left->getData(), &msg);
+			qDebug() << "propertys.left : " << msg;
+			bitConver::set::bytes(propertys.right->getData(), &msg);
+			qDebug() << "propertys.right : " << msg;
+		}
 	}
 
 	//serializeNormal::Node<serializeNormal::DataCheck, serializeNormal::DataCheck> dNode1;

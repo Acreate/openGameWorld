@@ -40,15 +40,20 @@ namespace serializeNormal {
 			dataSize = data.length();
 		}
 
-
+		/// @brief 返回用于计算数据大小的数据类型长度
+		/// @return 它应该是非0的
 		size_t getSizeTypeSize( ) const {
 			return this->countSize;
 		}
 
+		/// @brief 返回数据大小
+		/// @return 大于0表示存在
 		int32_t getSize( ) const {
 			return dataSize;
 		}
 
+		/// @brief 获取数据
+		/// @return 数据列表
 		QVector<char> getData( ) const {
 			return data;
 		}

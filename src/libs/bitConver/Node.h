@@ -20,13 +20,10 @@ namespace serializeNormal {
 	class BITCONVER_EXPORT Node<DataCheck, DataCheck> : public DataCheck {
 	public:
 		class BITCONVER_EXPORT Propertys {
+		public:
 			QSharedPointer<DataCheck> left;
 			QSharedPointer<DataCheck> right;
-
-		public:
-			friend class Node<DataCheck, DataCheck>;
 			virtual ~Propertys( ) { }
-
 			explicit Propertys( const QSharedPointer<DataCheck> left, const QSharedPointer<DataCheck> right ) {
 				if( left )
 					this->left = left;
@@ -60,6 +57,35 @@ namespace serializeNormal {
 		void append( const QSharedPointer<DataCheck> left, const QSharedPointer<DataCheck> right ) {
 			subChilder.append(Propertys(left, right));
 			dataSize += 1;
+		}
+
+		/// @brief 返回
+		/// @return 
+		Propertys *getDataPtr( ) {
+			if( dataSize > 0 )
+				return subChilder.data();
+			return nullptr;
+		}
+
+		/// @brief 返回对应下标位置，若超出长度，则返回末尾
+		/// @param index 下标位置
+		/// @return 返回对象
+		Propertys getIndex( int32_t index ) {
+			if( dataSize >= index )
+				return subChilder.last();
+			return subChilder[index];
+		}
+
+		/// @brief 设置到对应的下标位置，若下标大于长度，则设置到末尾
+		/// @param index 下标位置
+		/// @param property 设置对象
+		/// @return 成功返回 true
+		bool setIndex( int32_t index, const Propertys &property ) {
+			if( dataSize > index )
+				subChilder[index] = property;
+			else
+				subChilder.append(property);
+			return true;
 		}
 
 		explicit Node( ) : DataCheck() { }

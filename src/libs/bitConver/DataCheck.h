@@ -9,16 +9,28 @@ namespace serializeNormal {
 	class BITCONVER_EXPORT DataCheck : ISerializeNormal {
 	protected:
 		/// @brief 指定 data 的大小
-		qsizetype dataSize;
+		int32_t dataSize;
 		/// @brief 对象数据
-		QSharedPointer<QVector<char> > data;
+		QVector<char> data;
 		/// @brief sizeof(dataSize)
 		static size_t countSize;
 
 	public:
+		DataCheck( const DataCheck &other ) {
+			this->data.clear();
+			this->data.append(other.data);
+			this->dataSize = other.dataSize;
+		}
+
+		DataCheck operator=( const DataCheck &other ) {
+			this->data.clear();
+			this->data.append(other.data);
+			this->dataSize = other.dataSize;
+			return *this;
+		}
+
 		DataCheck( ) {
 			dataSize = 0;
-			data = QSharedPointer<QVector<char> >(new QList<char>());
 		}
 
 		/// @brief 使用一段数据初始化对象，该数据应该仅仅是数据，并不附带任何其他信息
@@ -26,7 +38,35 @@ namespace serializeNormal {
 		/// @param data 转换的数据
 		explicit DataCheck( const QVector<char> &data ) {
 			dataSize = data.length();
-			this->data = QSharedPointer<QVector<char> >(new QList<char>(data));
+		}
+
+
+		size_t getSizeTypeSize( ) const {
+			return this->countSize;
+		}
+
+		int32_t getSize( ) const {
+			return dataSize;
+		}
+
+		QVector<char> getData( ) const {
+			return data;
+		}
+
+		size_t resetData( const QVector<char> &dataBytes ) override {
+			dataSize = dataBytes.length();
+			this->data.clear();
+			this->data.append(dataBytes);
+			return dataSize;
+		}
+
+		size_t resetData( const char *dataBytes, size_t dataSize ) override {
+			this->dataSize = dataSize;
+			this->data.resize(dataSize);
+			char *data = this->data.data();
+			for( size_t index = 0; index < dataSize; ++index )
+				data[index] = dataBytes[index];
+			return this->dataSize;
 		}
 
 		/// @brief 对象转换为数据
@@ -34,43 +74,57 @@ namespace serializeNormal {
 		QSharedPointer<QVector<char> > serializeInstance( ) override {
 			if( dataSize ) {
 				QSharedPointer<QVector<char> > bytes = bitConver::get::bytes(dataSize);
-				QVector<char> *list = bytes.data();
-				char *data = this->data->data();
-				for( size_t index = 0; index < dataSize; ++index )
-					list->append(data[index]);
+				bytes.data()->resize(countSize + data.length());
+				char *pointer = bytes.data()->data();
+				char *data = this->data.data();
+				for( size_t index = countSize; index < dataSize; ++index )
+					pointer[index] = data[index];
 				return bytes;
 			}
-			return nullptr;
+			return {};
 		}
 
-		size_t serializeInstance( const char *dataBytes, size_t dataSize ) override {
-			size_t useCodeCount = bitConver::set::bytes(dataBytes, dataSize, &this->dataSize);
-			if( this->dataSize <= (dataSize - useCodeCount) ) {
-				data.clear();
-				for( size_t index = useCodeCount; index < this->dataSize; ++index )
-					data->append(dataBytes[index]);
-			}
+		QSharedPointer<QVector<char> > serializeInstance( const char *dataBytes, size_t dataSize, size_t index ) override {
+			size_t useCodeCount = bitConver::set::bytes(dataBytes, dataSize, &this->dataSize, index);
 
-			return 0;
+			if( this->dataSize <= (dataSize - useCodeCount) ) {
+				useCodeCount += index;
+				this->data.resize(this->dataSize);
+				char *pointer = this->data.data();
+				for( size_t orgIndex = 0; orgIndex < this->dataSize; ++orgIndex )
+					pointer[orgIndex] = dataBytes[orgIndex + useCodeCount];
+				qint64 resultSize = data.length() + useCodeCount - index;
+				QSharedPointer<QVector<char> > result(new QVector<char>(resultSize));
+				pointer = result.data()->data();
+				for( size_t orgIndex = 0; orgIndex < resultSize; ++orgIndex )
+					pointer[orgIndex] = dataBytes[orgIndex + index];
+				return result;
+			}
+			return {};
+		}
+
+		QSharedPointer<QVector<char> > serializeInstance( const char *dataBytes, size_t dataSize ) override {
+
+			return serializeInstance(dataBytes, dataSize, 0);
 		}
 
 		/// @brief 从一段数据中还原对象
 		/// @param dataBytes 数据，该数据应该包含持有的附加信息
 		/// @return 成功返回 true
-		size_t serializeInstance( const QVector<char> &dataBytes ) override {
-			size_t useCodeCount = bitConver::set::bytes(dataBytes, &this->dataSize);
+		QSharedPointer<QVector<char> > serializeInstance( const QVector<char> &dataBytes ) override {
+			const char *bytes = dataBytes.data();
 			qsizetype length = dataBytes.length();
-			if( this->dataSize <= (length - useCodeCount) ) {
-				QVector<char> *list = new QVector<char>(dataSize);
-				this->data.clear();
-				size_t index = 0;
-				char *pointer = list->data();
-				for( ; index < length; ++index )
-					pointer[index] = data->at(index);
-				return index;
-			}
-			return 0;
+			return serializeInstance(bytes, length);
 		}
+
+		/// @brief 从一段数据中还原对象
+		/// @param dataBytes 数据，该数据应该包含持有的附加信息
+		/// @param index 开始下标
+		/// @return 成功返回 true
+		QSharedPointer<QVector<char> > serializeInstance( const QVector<char> &dataBytes, size_t index ) override {
+			return serializeInstance(dataBytes.data(), dataBytes.length(), index);
+		}
+
 	};
 }
 

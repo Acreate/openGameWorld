@@ -2,6 +2,8 @@
 #define BITCONVER_H_H_HEAD__FILE__
 #pragma once
 
+#include <bitset>
+
 #include "BitConver_export.h"
 #include <QSharedPointer>
 #include <QVector>
@@ -89,36 +91,37 @@ namespace bitConver {
 
 	/// @brief 从数据转换到类型对象
 	namespace set {
+		/// @brief 是否小端
+		/// @return true 表示小端
+		bool isLittleEndian( );
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, int16_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 2 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8;
+			else
+				*outValue = data[index] << 8 | data[index + 1];
 			return 2;
 		}
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, int32_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 4 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
-			outValue[2] = data[index + 2];
-			outValue[3] = data[index + 3];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8 | data[index + 2] << 16 | data[index + 3] << 24;
+			else
+				*outValue = data[index] << 24 | data[index + 1] << 16 | data[index + 2] << 8 | data[index + 3];
 			return 4;
 		}
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, int64_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 4 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
-			outValue[2] = data[index + 2];
-			outValue[3] = data[index + 3];
-			outValue[4] = data[index + 4];
-			outValue[5] = data[index + 5];
-			outValue[6] = data[index + 6];
-			outValue[7] = data[index + 7];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8 | data[index + 2] << 16 | data[index + 3] << 24 | data[index + 4] << 32 | data[index + 5] << 40 | data[index + 6] << 48 | data[index + 7] << 56;
+			else
+				*outValue = data[index] << 56 | data[index + 1] << 48 | data[index + 2] << 40 | data[index + 3] << 32 | data[index + 4] << 24 | data[index + 5] << 16 | data[index + 6] << 8 | data[index + 7];
 			return 8;
 		}
 
@@ -126,62 +129,54 @@ namespace bitConver {
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, uint16_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 2 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8 | data[index + 2] << 16;
+			else
+				*outValue = data[index] << 16 | data[index + 1] << 8 | data[index + 2];
 			return 2;
 		}
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, uint32_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 4 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
-			outValue[2] = data[index + 2];
-			outValue[3] = data[index + 3];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8 | data[index + 2] << 16 | data[index + 3] << 24;
+			else
+				*outValue = data[index] << 24 | data[index + 1] << 16 | data[index + 2] << 8 | data[index + 3];
 			return 4;
 		}
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, uint64_t *outValue, size_t index = 0 ) {
 			if( dataLen < index || dataLen - index < 4 )
 				return 0;
-			outValue[0] = data[index];
-			outValue[1] = data[index + 1];
-			outValue[2] = data[index + 2];
-			outValue[3] = data[index + 3];
-			outValue[4] = data[index + 4];
-			outValue[5] = data[index + 5];
-			outValue[6] = data[index + 6];
-			outValue[7] = data[index + 7];
+			if( isLittleEndian() )
+				*outValue = data[index] | data[index + 1] << 8 | data[index + 2] << 16 | data[index + 3] << 24 | data[index + 4] << 32 | data[index + 5] << 40 | data[index + 6] << 48 | data[index + 7] << 56;
+			else
+				*outValue = data[index] << 56 | data[index + 1] << 48 | data[index + 2] << 40 | data[index + 3] << 32 | data[index + 4] << 24 | data[index + 5] << 16 | data[index + 6] << 8 | data[index + 7];
 			return 8;
 		}
 
 
 		inline BITCONVER_EXPORT size_t bytes( const char *data, const size_t dataLen, QString *outValue, size_t index = 0, size_t count = 0 ) {
-			if( dataLen == 0 || dataLen <= index )
+			if( dataLen == 0 || dataLen <= index || count > (dataLen - index) )
 				return 0;
-			bool cond = index == 0 && count == 0;
 
-			// 是否存在 \0 结束符
-			size_t forIndex = 0;
-			while( forIndex < dataLen )
-				if( data[forIndex] == 0 ) {
-					if( cond )
-						*outValue = QString::fromUtf8(data);
-					else {
-						// 转换个数
-						size_t converCount = dataLen - index;
-						// 最小转换个数
-						if( count > 0 && count < converCount )
-							converCount = count;
-						auto converChar = new char[converCount]{0};
-						for( ; index < dataLen; ++index )
-							converChar[index] = data[index];
-						*outValue = QString::fromUtf8(converChar);
-						delete[] converChar;
-					}
-					return dataLen;
-				}
-			return 0;
+			if( count > 0 ) {
+				// 装填数据
+				char *converData = new char[count + 1]{0};
+				for( size_t orgIndex = 0; orgIndex < count; ++orgIndex )
+					converData[orgIndex] = data[index + orgIndex];
+				*outValue = QString::fromUtf8(converData);
+				delete[] converData;
+				return count;
+			}
+			// 装填数据
+			char *converData = new char[dataLen + 1]{0};
+			for( size_t orgIndex = 0; orgIndex < dataLen; ++orgIndex )
+				converData[orgIndex] = data[index + orgIndex];
+			*outValue = QString::fromUtf8(converData);
+			delete[] converData;
+			return dataLen;
 		}
 
 
@@ -201,7 +196,6 @@ namespace bitConver {
 			return bytes(data.data(), data.length(), outValue, index);
 		}
 
-		
 
 		inline BITCONVER_EXPORT size_t bytes( const QVector<char> &data, uint32_t *outValue, size_t index = 0 ) {
 			return bytes(data.data(), data.length(), outValue, index);

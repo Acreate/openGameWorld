@@ -55,4 +55,5 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
 	qt_finalize_executable(${PROJECT_NAME})
 endif()
-
+## 拷贝 text.bin 文件
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/text.bin" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/text.bin" )

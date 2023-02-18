@@ -73,7 +73,7 @@ namespace serializeNormal {
 		/// @return 返回对象
 		QSharedPointer<Propertys> getIndex( int32_t index ) {
 
-			if( dataSize == 0 || dataSize >= index )
+			if( dataSize == 0 || dataSize <= index )
 				return nullptr;
 			return subChilder[index];
 		}

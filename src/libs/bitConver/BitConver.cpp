@@ -5,13 +5,13 @@ union p {
 	char b;
 };
 
-int panduan_2( ) {
+static int panduan_2( ) {
 	p p1;
 	p1.a = 1;
 	return p1.a == p1.b;
 }
 
-bool bitConver::set::isLittleEndian( ) {
+bool bitConver::Endian::isLittleEndian( ) {
 	static int32_t flage = 0;
 	if( flage > 0 )
 		return true;

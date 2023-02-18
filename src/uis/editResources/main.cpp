@@ -18,12 +18,18 @@ int main( int argc, char *argv[] ) {
 			qDebug() << "转化实现";
 			auto propertys = node1.getIndex(0);
 			QString msg;
-			bitConver::set::bytes(propertys->left->getData(), &msg);
+			QVector<char> data = propertys->left->getData();
+			bitConver::set::bytes(data, &msg);
 			qDebug() << "propertys.left : " << msg;
-			bitConver::set::bytes(propertys->right->getData(), &msg);
+			data = propertys->right->getData();
+			bitConver::set::bytes(data, &msg);
 			qDebug() << "propertys.right : " << msg;
 		}
 	}
+	int32_t test = 32, testOut = 0;
+	QSharedPointer<QVector<char> > sharedPointer = bitConver::get::bytes(test);
+
+	int bytes = bitConver::set::bytes(sharedPointer.data()->data(), sharedPointer->length(), &testOut);
 
 	//serializeNormal::Node<serializeNormal::DataCheck, serializeNormal::DataCheck> dNode1;
 	//serializeNormal::Node<int, int> node2; // error

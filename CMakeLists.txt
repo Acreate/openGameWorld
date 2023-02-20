@@ -4,18 +4,9 @@ PROJECT( openGameWorld VERSION 0.1 LANGUAGES CXX )
 
 SET( QT_VERSION_MAJOR 6 )
 SET( DEPLOY_QT_HOME "C:/Qt/6.4.2/msvc2019_64/" )
-#SET(QT_QMAKE_EXECUTABLE "${DEPLOY_QT_HOME}/bin/qmake.exe")
-#SET(Qt6CoreTools_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6CoreTools")
-#SET(Qt6Core_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6Core")
-#SET(Qt6EntryPointPrivate_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6EntryPointPrivate")
-#SET(Qt6ZlibPrivate_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6ZlibPrivate")
 SET( Qt6_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6" )
-#SET(WINDEPLOYQT_EXECUTABLE "${DEPLOY_QT_HOME}/bin/windeployqt.exe")
-#SET(CMAKE_PROJECT_INCLUDE_BEFORE "C:/Qt/Tools/QtCreator/share/qtcreator/package-manager/auto-setup.cmake")
 
-LINK_DIRECTORIES( ${DEPLOY_QT_HOME}/bin )
-LIST( APPEND CMAKE_MSVCIDE_RUN_PATH "${DEPLOY_QT_HOME}/bin" )
-LIST( APPEND LD_LIBRARY_PATH "${DEPLOY_QT_HOME}/bin" )
+SET(OpenCV_DIR "C:/libs/opencv/build/")
 
 SET( CMAKE_C_STANDARD 99 )
 SET( CMAKE_C_STANDARD_REQUIRED ON )
@@ -39,11 +30,14 @@ SET( CMAKE_AUTORCC ON )
 #FIND_PACKAGE(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 FIND_PACKAGE( Qt6 COMPONENTS Widgets REQUIRED )
 
+find_package(OpenCV REQUIRED)
+
 ADD_SUBDIRECTORY( src/libs/processArgs )
 ADD_SUBDIRECTORY( src/libs/processPath )
 ADD_SUBDIRECTORY( src/libs/typeFile )
 ADD_SUBDIRECTORY( src/libs/typeSql )
 ADD_SUBDIRECTORY( src/libs/bitConver )
+
 
 ADD_SUBDIRECTORY( src/consoles/moveFile )
 ADD_SUBDIRECTORY( src/consoles/createFileTemplates )

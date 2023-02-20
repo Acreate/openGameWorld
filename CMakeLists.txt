@@ -42,3 +42,6 @@ ADD_SUBDIRECTORY( src/consoles/pathInfo )
 
 ADD_SUBDIRECTORY( src/uis/editResources )
 
+
+ADD_SUBDIRECTORY( src/uis/opencvDemo0001 )
+

@@ -1,5 +1,11 @@
 project(openCVInterface)
-
+message("============================")
+message( "PROJECT_BINARY_DIR = ${PROJECT_BINARY_DIR}")
+message( "CMAKE_INSTALL_BINDIR = ${CMAKE_INSTALL_BINDIR}")
+message("============================")
+## 特别的输出
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/filter_plugins/ )
+##SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/filter_plugins/ )
 
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core) 
 find_package(OpenCV REQUIRED)
@@ -8,7 +14,12 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 # 当前目录下也有代码
 FILE(GLOB SRC_LIST "*.cpp" "*.c" "*.hpp" "*.h")
 add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
-target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(
+	${PROJECT_NAME} 
+	PRIVATE 
+		Qt${QT_VERSION_MAJOR}::Core
+		${OpenCV_LIBS}
+)
 
 STRING(SUBSTRING "${PROJECT_NAME}" 0 1 exportFileStartName)
 STRING(SUBSTRING "${PROJECT_NAME}" 1 -1 exportFileName)
@@ -41,8 +52,8 @@ TARGET_INCLUDE_DIRECTORIES( ${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR
 ## endforeach()
 
 # DLL 复制
-add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:opencv_world> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
+## add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:opencv_world> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+## )
 
 ## 

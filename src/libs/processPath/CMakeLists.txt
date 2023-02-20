@@ -4,15 +4,9 @@ project(processPath)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # 当前目录下也有代码
-
 FILE(GLOB SRC_LIST "*.cpp" "*.c" "*.hpp" "*.h")
-
 add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
-
-
 target_link_libraries(${PROJECT_NAME} Qt${QT_VERSION_MAJOR}::Core)
-
-
 
 STRING(SUBSTRING "${PROJECT_NAME}" 0 1 exportFileStartName)
 STRING(SUBSTRING "${PROJECT_NAME}" 1 -1 exportFileName)
@@ -22,6 +16,4 @@ GENERATE_EXPORT_HEADER( ${PROJECT_NAME}
 	EXPORT_FILE_NAME 
 		${exportFileName} 
 )
-
 TARGET_INCLUDE_DIRECTORIES( ${PROJECT_NAME} INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} )
-STRING(TOUPPER "${PROJECT_NAME}" exportFileName)

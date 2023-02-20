@@ -1,14 +1,23 @@
 project(editResources  VERSION 0.1 LANGUAGES CXX)
 
+
+
+include_directories(../libs/openCVInterface) 
 include_directories(../libs/processArgs)
 include_directories(../libs/processPath)
 include_directories(../libs/typeFile)
 include_directories(../libs/bitConver)
+
+
+FIND_PACKAGE( Qt${QT_VERSION_MAJOR}  COMPONENTS Widgets REQUIRED )
+FIND_PACKAGE( Qt${QT_VERSION_MAJOR}  COMPONENTS Gui REQUIRED )
+FIND_PACKAGE( Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED )
+
+FIND_PACKAGE(OpenCV REQUIRED)
+
 include_directories(${OpenCV_INCLUDE_DIRS}) 
-find_package(OpenCV REQUIRED core videoio)
+
 # 当前目录下也有代码
-message(消息 : ${OpenCV_INSTALL_PATH})
-message(消息 : ${OpenCV_LIB_COMPONENTS})
 FILE(GLOB SRC_LIST "*.cpp" "*.c" "*.hpp" "*.h")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -36,6 +45,7 @@ target_link_libraries(
 	${PROJECT_NAME} 
 PRIVATE 
 	Qt${QT_VERSION_MAJOR}::Widgets
+	openCVInterface
 	bitConver
 	processArgs
 	processPath
@@ -62,23 +72,12 @@ endif()
 execute_process( COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/text.bin" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/text.bin" )
 
 
+#6.Qt DLL 复制
+add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin> $<TARGET_FILE_DIR:${PROJECT_NAME}>/platforms/$<TARGET_FILE_NAME:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin>
+)
 
-SET( opencvVideoioFfmpegDllName opencv_videoio_ffmpeg${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}_64.dll )
-if(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-## 调试模式使用的 dll
-	SET( opencvDllName opencv_world${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}d.dll )
-	SET( opencvVideoioMsmfDllName opencv_videoio_msmf${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}_64d.dll )
-elseif(CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
-## 发布模式使用的 dll
-	SET( opencvDllName opencv_world${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}.dll )
-	SET( opencvVideoioMsmfDllName opencv_videoio_msmf${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}_64.dll )
-endif()
 
-set( copyDlls ${opencvDllName} ${opencvVideoioMsmfDllName} ${opencvVideoioFfmpegDllName})
-
-foreach( opencvLib ${copyDlls} )
-	message(${opencvLib})
-	execute_process( COMMAND ${CMAKE_COMMAND} -E copy "${OpenCV_DIR}/x64/vc16/bin/${opencvLib}" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${opencvLib}" )
-endforeach()
-
-## 

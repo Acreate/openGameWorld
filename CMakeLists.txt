@@ -34,7 +34,6 @@ ADD_SUBDIRECTORY( src/libs/processPath )
 ADD_SUBDIRECTORY( src/libs/typeFile )
 ADD_SUBDIRECTORY( src/libs/typeSql )
 ADD_SUBDIRECTORY( src/libs/bitConver )
-ADD_SUBDIRECTORY( src/libs/openCVInterface )
 
 ADD_SUBDIRECTORY( src/consoles/moveFile )
 ADD_SUBDIRECTORY( src/consoles/createFileTemplates )
@@ -42,6 +41,4 @@ ADD_SUBDIRECTORY( src/consoles/pathInfo )
 
 ADD_SUBDIRECTORY( src/uis/editResources )
 
-
-ADD_SUBDIRECTORY( src/uis/opencvDemo0001 )
 

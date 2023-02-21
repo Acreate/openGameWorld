@@ -1,4 +1,10 @@
-project(editResources  VERSION 0.1 LANGUAGES CXX)
+
+message("============ ${CURRENT_FOLDER}")
+STRING( REGEX REPLACE ".*/(.*)" "\\1" CURRENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR} )
+message("name =" ${CURRENT_FOLDER})
+project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
+message("============ ${CURRENT_FOLDER}")
+
 
 
 
@@ -68,16 +74,15 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
 	qt_finalize_executable(${PROJECT_NAME})
 endif()
-## 拷贝 text.bin 文件
-execute_process( COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/text.bin" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/text.bin" )
 
 
-#6.Qt DLL 复制
 add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin> $<TARGET_FILE_DIR:${PROJECT_NAME}>/platforms/$<TARGET_FILE_NAME:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin>
+	## 拷贝 text.bin 文件
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/text.bin" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/text.bin"
 )
 
 

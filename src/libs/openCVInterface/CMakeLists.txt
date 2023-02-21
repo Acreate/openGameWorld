@@ -1,8 +1,11 @@
-project(openCVInterface)
-message("============================")
-message( "PROJECT_BINARY_DIR = ${PROJECT_BINARY_DIR}")
-message( "CMAKE_INSTALL_BINDIR = ${CMAKE_INSTALL_BINDIR}")
-message("============================")
+
+message("============ ${CURRENT_FOLDER}")
+STRING( REGEX REPLACE ".*/(.*)" "\\1" CURRENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR} )
+message("name =" ${CURRENT_FOLDER})
+project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
+message("============ ${CURRENT_FOLDER}")
+
+
 ## 特别的输出
 SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/filter_plugins/ )
 ##SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/filter_plugins/ )

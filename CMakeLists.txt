@@ -6,8 +6,6 @@ message("name =" ${CURRENT_FOLDER})
 project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
 message("============ ${CURRENT_FOLDER}")
 
-
-
 SET( QT_VERSION_MAJOR 6 )
 SET( DEPLOY_QT_HOME "C:/Qt/6.4.2/msvc2019_64/" )
 SET( Qt6_DIR "${DEPLOY_QT_HOME}/lib/cmake/Qt6" )

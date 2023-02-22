@@ -6,8 +6,8 @@ project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
 message("============ ${CURRENT_FOLDER}")
 
 
-#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
 # 当前目录下也有代码
 FILE(GLOB SRC_LIST "*.cpp" "*.c" "*.hpp" "*.h")

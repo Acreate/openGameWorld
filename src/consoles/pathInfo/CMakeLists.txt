@@ -1,4 +1,9 @@
-project(pathInfo LANGUAGES CXX)
+
+message("============ ${CURRENT_FOLDER}")
+STRING( REGEX REPLACE ".*/(.*)" "\\1" CURRENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR} )
+message("name =" ${CURRENT_FOLDER})
+project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
+message("============ ${CURRENT_FOLDER}")
 
 include_directories(../libs/processArgs)
 include_directories(../libs/processPath)
@@ -19,6 +24,18 @@ target_link_libraries(${PROJECT_NAME}
         processPath 
         typeFile
         )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+	MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	MACOSX_BUNDLE TRUE
+	WIN32_EXECUTABLE TRUE
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+	qt_finalize_executable(${PROJECT_NAME})
+endif()
 
 set(MY_APP ${PROJECT_NAME})
 ## opencv dll

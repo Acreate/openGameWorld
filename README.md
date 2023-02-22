@@ -1,6 +1,8 @@
 # openGameWorld
 qt 6.4.x products
 
+调试时候应当按照 install 模式进行，否则需要手动进行配置动态库以及qt插件
+
 ------------------------
 
 ## moveFile 项目

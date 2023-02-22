@@ -1,6 +1,12 @@
 ﻿CMAKE_MINIMUM_REQUIRED( VERSION 3.5 )
 
-PROJECT( openGameWorld VERSION 0.1 LANGUAGES CXX )
+message("============ ${CURRENT_FOLDER}")
+STRING( REGEX REPLACE ".*/(.*)" "\\1" CURRENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR} )
+message("name =" ${CURRENT_FOLDER})
+project(${CURRENT_FOLDER}  VERSION 0.1 LANGUAGES CXX)
+message("============ ${CURRENT_FOLDER}")
+
+
 
 SET( QT_VERSION_MAJOR 6 )
 SET( DEPLOY_QT_HOME "C:/Qt/6.4.2/msvc2019_64/" )
@@ -28,7 +34,6 @@ SET( CMAKE_AUTOUIC ON )
 SET( CMAKE_AUTOMOC ON )
 SET( CMAKE_AUTORCC ON )
 
-
 ADD_SUBDIRECTORY( src/libs/processArgs )
 ADD_SUBDIRECTORY( src/libs/processPath )
 ADD_SUBDIRECTORY( src/libs/typeFile )
@@ -40,5 +45,6 @@ ADD_SUBDIRECTORY( src/consoles/createFileTemplates )
 ADD_SUBDIRECTORY( src/consoles/pathInfo )
 
 ADD_SUBDIRECTORY( src/uis/editResources )
+ADD_SUBDIRECTORY( src/uis/showCamera )
 
 

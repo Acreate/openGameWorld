@@ -48,22 +48,6 @@ endif()
      MACOSX_BUNDLE TRUE
  )
  
-set(MY_APP ${PROJECT_NAME})
-if(APPLE)
-  set(executable_path "$<TARGET_FILE_NAME:${MY_APP}>.app")
-else()
-  set(executable_path "\${QT_DEPLOY_BIN_DIR}/$<TARGET_FILE_NAME:${MY_APP}>")
-endif()
-set(deploy_script "${CMAKE_CURRENT_BINARY_DIR}/deploy_${MY_APP}.cmake")
-file(GENERATE OUTPUT ${deploy_script} CONTENT "
-include(\"${QT_DEPLOY_SUPPORT}\")
-qt_deploy_runtime_dependencies(
-    EXECUTABLE \"${executable_path}\"
-    PLUGINS_DIR \"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\"
-)"
-)
-install(TARGETS ${MY_APP} DESTINATION bin)
-install(SCRIPT ${deploy_script})
 
 target_link_libraries(
 	${PROJECT_NAME} 
@@ -98,3 +82,40 @@ if(QT_VERSION_MAJOR EQUAL 6)
 	qt_finalize_executable(${PROJECT_NAME})
 endif()
 
+## add_custom_command(TARGET ${PROJECT_NAME}  POST_BUILD
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Multimedia> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::MultimediaWidgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Network> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+##     COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+## 	COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin> $<TARGET_FILE_DIR:${PROJECT_NAME}>/##platforms/ $<TARGET_FILE_NAME:Qt${QT_VERSION_MAJOR}::QWindowsIntegrationPlugin>
+## )
+## 
+## 
+## add_custom_command(TARGET ${PROJECT_NAME}
+##     POST_BUILD
+##     COMMAND "${WINDEPLOYQT_ENV_SETUP}" && "${WINDEPLOYQT_EXECUTABLE}" \"$<TARGET_FILE:${PROJECT_NAME}>\"
+## )
+
+
+
+ set_target_properties(${PROJECT_NAME}  PROPERTIES
+     WIN32_EXECUTABLE TRUE
+     MACOSX_BUNDLE TRUE
+ )
+ 
+set(MY_APP ${PROJECT_NAME})
+if(APPLE)
+  set(executable_path "$<TARGET_FILE_NAME:${MY_APP}>.app")
+else()
+  set(executable_path "\${QT_DEPLOY_BIN_DIR}/$<TARGET_FILE_NAME:${MY_APP}>")
+endif()
+set(deploy_script "${CMAKE_CURRENT_BINARY_DIR}/deploy_${MY_APP}.cmake")
+file(GENERATE OUTPUT ${deploy_script} CONTENT "
+include(\"${QT_DEPLOY_SUPPORT}\")
+qt_deploy_runtime_dependencies(
+    EXECUTABLE \"${executable_path}\"
+    PLUGINS_DIR \"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\"
+)"
+)

@@ -73,5 +73,5 @@ message(\"=========== out msg ===========\")
 #	COMMAND \${CMAKE_COMMAND} -E copy_if_different \"${CMAKE_CURRENT_SOURCE_DIR}/test.jpg\" \"$#{CMAKE_INSTALL_PREFIX}/test.jpg\"
 #)
 ")
-install(TARGETS ${MY_APP} DESTINATION bin)
+install(TARGETS ${MY_APP} DESTINATION ${user_install_last_dir})
 install(SCRIPT ${deploy_script})
